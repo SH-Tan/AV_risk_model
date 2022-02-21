@@ -61,6 +61,10 @@ namespace riskfield {
 
 class RoadModel {
     public:
+
+        RoadModel(float w) : width(w) {}
+        ~RoadModel(){}
+
         /*
         * args: 道路总宽, 车道线类型
         * 1. 双黄线或者道路中间物理分割等 yd
@@ -69,20 +73,24 @@ class RoadModel {
         * lane type: dict {'yd', num; 'bd', num; 'br', num}
         * ego_car struct
         */
-        void LaneModel();
+        void LaneModel(cv::Mat &map, const EgoCar ego);
 
         /*
-        * args: 道路总宽
-        * 1. 双黄线或者车道边界,物理分割等 yd
-        * 2. 白色虚线: bd
-        * 3. 白色实线: br
-        * lane type: dict {'yd', num; 'bd', num; 'br', num}
-        * ego_car struct
+        * args: 道路总宽, map, ego
         */
-        void BoarderModel();
+        void BoarderModel(cv::Mat &map, const EgoCar ego);
 
     private:
-        EgoCar *ego;
+        // const parameters
+        // Boarder
+        const float r = 1/exp(20);
+        float width; // 车道总宽
+
+        // Lane
+        const float Ay = exp(10);  // yellow
+        const float Aw = exp(8);   // white
+
+
 };
 
 }  // riskfield
