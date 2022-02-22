@@ -21,7 +21,16 @@ void RoadModel::LaneModel(cv::Mat &map){
     // need adjust
     float Yl = 3*width/4;
     float Yr = width/4;
-
+    float Yd = width/2;
+    float Ely = 0;
+    float Elw = 0;
+    for (int i = 0; i < row; ++i) {
+        for (int j = 0; j < col; ++j) {
+            Ely = Ay * exp(-pow((i-Yd),2)/2*pow(a,2));
+            Elw = Aw * exp(-pow(i-Yl,2)/2*pow(a,2)) + Aw * exp(-pow(i-Yr,2)/2*pow(a,2));
+            map.at<float>(i,j) = Ely + Elw;
+        }
+    }
 
     
 }
