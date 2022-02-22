@@ -80,6 +80,7 @@ class RoadModel {
     private:
         // Boarder const parameters
         const float r = 1/exp(20);
+        float k = 0.4;
         float width;  // 车道总宽
 
         // Lane const parameters
