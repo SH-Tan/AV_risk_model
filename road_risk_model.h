@@ -43,9 +43,6 @@
 #include <sensor_msgs/Image.h>
 #include <geometry_msgs/Pose2D.h>
 
-//egocar
-#include "ego.hpp"
-
 #include <mutex>
 #include <thread>
 #include <stack>
@@ -66,30 +63,29 @@ class RoadModel {
         ~RoadModel(){}
 
         /*
-        * args: 道路总宽, 车道线类型
-        * 1. 双黄线或者道路中间物理分割等 yd
-        * 2. 白色虚线: bd
-        * 3. 白色实线: br
-        * lane type: dict {'yd', num; 'bd', num; 'br', num}
-        * ego_car struct
-        */
-        void LaneModel(cv::Mat &map, const EgoCar ego);
+         * args: 道路总宽, 车道线类型
+         * 1. 双黄线或者道路中间物理分割等 yd
+         * 2. 白色虚线: bd
+         * 3. 白色实线: br
+         * lane type: dict {'yd', num; 'bd', num; 'br', num}
+         * ego_car struct
+         */
+        void LaneModel(cv::Mat &map);
 
         /*
-        * args: 道路总宽, map, ego
-        */
-        void BoarderModel(cv::Mat &map, const EgoCar ego);
+         * args: 道路总宽, map, ego
+         */
+        void BoarderModel(cv::Mat &map);
 
     private:
-        // const parameters
-        // Boarder
+        // Boarder const parameters
         const float r = 1/exp(20);
-        float width; // 车道总宽
+        float width;  // 车道总宽
 
-        // Lane
+        // Lane const parameters
         const float Ay = exp(10);  // yellow
         const float Aw = exp(8);   // white
-
+        const float a = 2;  // 控制幅度的参数
 
 };
 
