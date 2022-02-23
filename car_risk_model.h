@@ -2,7 +2,7 @@
 接受障碍物信息,
 构建行车风险场.
 姓名: Shuhang Tan
-修改日期: 2022-2-21
+修改日期: 2022-2-23
 需要参数:
     静态障碍物:
     动态障碍物:
@@ -39,7 +39,7 @@
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <darknet_ros_msgs/BoundingBox.h>
 
-//sensor_msgs
+// sensor_msgs
 #include <sensor_msgs/Image.h>
 #include <geometry_msgs/Pose2D.h>
 
@@ -47,6 +47,10 @@
 #include <thread>
 #include <stack>
 #include <vector>
+
+// ego
+#include "ego.hpp"
+#include "obscar.hpp"
 
 using namespace std;
 using namespace cv;
@@ -57,7 +61,48 @@ using namespace darknet_ros_msgs;
 namespace riskfield {
 
 class CarModel {
+    public:
+        CarModel(EgoCar *ego);
+        ~CarModel();
 
+        /**
+         * @brief calculate the cos similarity between x and y
+         * 
+         * @param x 
+         * @param y 
+         * @return float 
+         */
+        float cosine_similarity(float x, float y);
+
+        /**
+         * @brief 
+         * 
+         * @param tan_d 
+         * @param k_a 
+         * @param k_first 
+         * @return float 
+         */
+        float calE(float tan_d, vector<float> k_a, float k_first);
+
+        /**
+         * @brief convert the angle
+         * 
+         * @param x 
+         * @param y 
+         * @param r 
+         * @return vector<float> 
+         */
+        vector<float> rotateAxis(float x, float y, float r);
+
+        void buildField();
+
+        void carModel();
+
+
+
+    private:
+        EgoCar *ego;
+        vector<ObsCar*> obs_list_;
 };
 
 }  // riskfield

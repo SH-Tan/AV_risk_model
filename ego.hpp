@@ -20,6 +20,13 @@ class EgoCar {
             return m_ego;
         };
 
+        ~EgoCar() {
+            if (m_ego != nullptr) {
+                delete m_ego;
+                m_ego = nullptr;
+            }
+        }
+
     private:
         EgoCar(vector<float> dimension = {0,0,0}, vector<float> location = {0,0,0}, float y = 0, float v = 0, float a = 0)
             : l(dimension[0]), w(dimension[1]), h(dimension[2]),
@@ -47,13 +54,6 @@ class EgoCar {
             m_ego->velocity = v;
             m_ego->acc = a;
         };
-
-        ~EgoCar() {
-            if (m_ego != nullptr) {
-                delete m_ego;
-                m_ego = nullptr;
-            }
-        }
 
         float l, w, h;  // long, width, height
         float x, y, z;  // location
