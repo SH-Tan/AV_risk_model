@@ -62,7 +62,7 @@ namespace riskfield {
 
 class CarModel {
     public:
-        CarModel(EgoCar *ego);
+        CarModel(EgoCar *car, const vector<ObsCar*> &obs_list);
         ~CarModel();
 
         /**
@@ -94,10 +94,11 @@ class CarModel {
          */
         vector<float> rotateAxis(float x, float y, float r);
 
+        void normV(vector<float> &vec);
+
         void buildField();
 
         void carModel();
-
 
 
     private:

@@ -20,6 +20,23 @@ class EgoCar {
             return m_ego;
         };
 
+        float get_x() { return m_ego->x; }
+
+        float get_y() { return m_ego->y; }
+
+        float get_z() { return m_ego->z; }
+
+        vector<float> get_dimension() {
+            vector<float> dimension = {m_ego->l, m_ego->w, m_ego->h};
+            return dimension;
+        }
+
+        float get_yaw() { return m_ego->yaw; }
+
+        float get_v() { return m_ego->velocity; }
+
+        float get_a() { return m_ego->acc; }
+
         ~EgoCar() {
             if (m_ego != nullptr) {
                 delete m_ego;
