@@ -41,11 +41,17 @@ float CarModel::cosine_similarity(vector<float> x, vector<float> y) {
 }
 
 float CarModel::calE(float tan_d, int k_a, float k_first) {
-
+    float k_E = exp(tan_d*k_a);
+    float E = k_E / k_first;
+    E_n = E / max(E);  // (0,1]
+    return E_n;
 }
 
 vector<float> CarModel::rotateAxis(float x, float y, float r) {
-
+    vector<float> ret(2);
+    ret[0] = cos(r)*x + sin(r)*y;
+    ret[1] = -sin(r)*x + cos(r)*y;
+    return ret;
 }
 
 void CarModel::buildField() {
@@ -64,6 +70,7 @@ void CarModel::normV(vector<float> &vec) {
 void CarModel::carModel(cv::Mat &map) {
     int n = obs_list_.size(); // total obstacles
     for (auto obs_c : obs_list_) {
+        vector<float> obs_d = obs_c->get_dimension();
         vector<float> d_v = {(ego->get_x())-(obs_c->get_x()), (ego->get_y())-(obs_c->get_y())};
         normV(d_v); // normalize vector
 
@@ -97,11 +104,34 @@ void CarModel::carModel(cv::Mat &map) {
             similarity_sign = -1;
         }
 
+        float k_d = 0.0;
+        bool sign;
         // 严格跟驰状态
-        // need modify
+        // need modify 同一车道, 不产生变道\超车
         if (d_v[1] == 0) {
-            
+            sign = (yaw_re == 0) ? true : false;  // true 跟驰, 不发生变道
+            float v_r = v_re * similarity_sign;
+
+            if (!sign || (v_r < 0)) {  // 问题不大
+                float ratio = abs(v_re)/ego->get_v();  // obj_v > 0, 一般不会大于2倍ego, ratio (0,1)
+                k_d = (1+exp(-ratio)) * (obs_d[1]/obs_d[0]);  // (1.36,2)*w/l
+            } else {
+                k_d = 1 + log2(1+v_r);  // 横轴与垂直距离修正参数
+            }
+        } else {  // 非跟驰
+            bool d_sign = d_v[1] > 0;  // 位置矢量, 角度逆时针
+            sign = ~(d_sign ^ yaw_sign);  // true risk up
+            k_d = 1;
+            if (!sign) {
+                float ratio = abs(v_re)/ego->get_v();  // obj_v > 0, 一般不会大于2倍ego, ratio (0,1)
+                k_d = (1+exp(-ratio)) * (obs_d[1]/obs_d[0]);  // (1.36,2)*w/l
+            } else {
+                k_d = 1 + log2(1+v_revised)
+            }
+
         }
+
+        buildField();  // TODO
     }
 }
 
