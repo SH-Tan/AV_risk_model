@@ -72,7 +72,7 @@ class CarModel {
          * @param y 
          * @return float 
          */
-        float cosine_similarity(float x, float y);
+        float cosine_similarity(vector<float> x, vector<float> y);
 
         /**
          * @brief 
@@ -94,11 +94,20 @@ class CarModel {
          */
         vector<float> rotateAxis(float x, float y, float r);
 
+        /**
+         * @brief 
+         * 向量大小归一化
+         * @param vec 
+         */
         void normV(vector<float> &vec);
 
         void buildField();
 
-        void carModel();
+        /**
+         * @brief 
+         * 入口函数
+         */
+        void carModel(cv::Mat &map);
 
 
     private:

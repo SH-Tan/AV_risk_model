@@ -18,6 +18,24 @@ class ObsCar {
 
         ~ObsCar() {}
 
+        float get_x() { return x; }
+
+        float get_y() { return y; }
+
+        float get_z() { return z; }
+
+        vector<float> get_dimension() {
+            vector<float> dimension = {l, w, h};
+            return dimension;
+        }
+
+        float get_yaw() { return yaw; }
+
+        float get_v() { return velocity; }
+
+        float get_a() { return acc; }
+
+
     private:
         ObsCar(const ObsCar&) = delete;              // copy cotr 明确拒绝
         ObsCar& operator=(const ObsCar&) = delete;   // 明确拒绝 
