@@ -54,7 +54,37 @@ vector<float> CarModel::rotateAxis(float x, float y, float r) {
     return ret;
 }
 
-void CarModel::buildField() {
+void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimension, float k_d,
+    vector<float> d_v, vector<float> k_a, float v, float yaw) {
+        float x = location[0], y = location[1];
+        int row = map.rows;
+        int col = map.cols;
+        vector<float> axis;
+        float k;
+        float k1_1;
+        float k1_2;
+        float x_d1;
+        float x_d2; 
+        float ss_1;
+        float k_first;
+        float tan_d;
+        for (int i = 0; i < row; ++i) {
+            for (int j = 0; j < col; ++j) {
+                axis = rotateAxis(i, j, yaw);
+                for (int a : k_a) {
+                    k = exp(a*v);
+                    k1_1 = l*k_d;
+                    k1_2 = w;
+                    x_d1 = pow((x-axis[0])/k1_1,2.0);
+                    x_d2 = pow((y-axis[1])/k1_2,2.0); 
+                    ss_1 = x_d2 + x_d1;
+                    k_first = sqrt(ss_1) < 4 ? 4 : sqrt(ss_1);
+                    tan_d = d_v[1]/d_v[0];
+                    map[i][j] = calE(tan_d, k_a, k_first);
+                }
+
+            }
+        }
 
 }
 

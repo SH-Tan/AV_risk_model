@@ -18,22 +18,22 @@ class ObsCar {
 
         ~ObsCar() {}
 
-        float get_x() { return x; }
+        float get_x() const { return x; }
 
-        float get_y() { return y; }
+        float get_y() const { return y; }
 
-        float get_z() { return z; }
+        float get_z() const { return z; }
 
-        vector<float> get_dimension() {
+        vector<float> get_dimension() const {
             vector<float> dimension = {l, w, h};
             return dimension;
         }
 
-        float get_yaw() { return yaw; }
+        float get_yaw() const { return yaw; }
 
-        float get_v() { return velocity; }
+        float get_v() const { return velocity; }
 
-        float get_a() { return acc; }
+        float get_a() const { return acc; }
 
 
     private:

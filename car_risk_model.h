@@ -101,7 +101,19 @@ class CarModel {
          */
         void normV(vector<float> &vec);
 
-        void buildField();
+        /**
+         * @brief 
+         * 
+         * @param location 
+         * @param dimension 
+         * @param k_d 
+         * @param d_v 
+         * @param k_a 
+         * @param v_r 
+         * @param yaw 
+         */
+        void buildField(Mat &map, vector<float> location, vector<float> dimension, float k_d,
+                vector<float> d_v, vector<float> k_a, float v_r, float yaw);
 
         /**
          * @brief 
