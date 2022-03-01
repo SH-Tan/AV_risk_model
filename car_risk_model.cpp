@@ -9,7 +9,8 @@
 #include <vector>
 #include <random>
 #include <chrono>
-#include <assert>
+#include <assert.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -34,17 +35,17 @@ float getMold(const vector<float>& vec){   //求向量的模长
 float CarModel::cosine_similarity(vector<float> x, vector<float> y) {
     assert(x.size() == y.size());
     float tmp = 0.0;  // 内积
-    for (int i = 0; i < x.size(); ++i) {
-        tmp += x[y]*y[i];
+    for (int i = 0; i < (int)x.size(); ++i) {
+        tmp += x[i]*y[i];
     }
     return tmp / (getMold(x)*getMold(y));
 }
 
-float CarModel::calE(float tan_d, int k_a, float k_first) {
-    float k_E = exp(tan_d*k_a);
+float CarModel::calE(float tan_d, float a, float k_first) {
+    float k_E = exp(tan_d*a);
     float E = k_E / k_first;
-    E_n = E / max(E);  // (0,1]
-    return E_n;
+
+    return E;
 }
 
 vector<float> CarModel::rotateAxis(float x, float y, float r) {
@@ -57,6 +58,7 @@ vector<float> CarModel::rotateAxis(float x, float y, float r) {
 void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimension, float k_d,
     vector<float> d_v, vector<float> k_a, float v, float yaw) {
         float x = location[0], y = location[1];
+        float l = dimension[0], w = dimension[1];
         int row = map.rows;
         int col = map.cols;
         vector<float> axis;
@@ -68,6 +70,8 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         float ss_1;
         float k_first;
         float tan_d;
+        int n = k_a.size();
+        float max_E = 1.0;
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < col; ++j) {
                 axis = rotateAxis(i, j, yaw);
@@ -80,11 +84,22 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
                     ss_1 = x_d2 + x_d1;
                     k_first = sqrt(ss_1) < 4 ? 4 : sqrt(ss_1);
                     tan_d = d_v[1]/d_v[0];
-                    map[i][j] = calE(tan_d, k_a, k_first);
+                    map.at<float>(i,j) += calE(tan_d, a, k_first)/n;
                 }
+                max_E = max(max_E, map.at<float>(i,j));
 
             }
         }
+
+        // 归一化
+        if (max_E > 1) {
+            for (int i = 0; i < row; ++i) {
+                for (int j = 0; j < col; ++j) {
+                    map.at<float>(i,j) /= max_E;
+                }
+            }
+        }
+        
 
 }
 
@@ -98,7 +113,6 @@ void CarModel::normV(vector<float> &vec) {
 }
 
 void CarModel::carModel(cv::Mat &map) {
-    int n = obs_list_.size(); // total obstacles
     for (auto obs_c : obs_list_) {
         vector<float> obs_d = obs_c->get_dimension();
         vector<float> d_v = {(ego->get_x())-(obs_c->get_x()), (ego->get_y())-(obs_c->get_y())};
@@ -115,12 +129,13 @@ void CarModel::carModel(cv::Mat &map) {
   
         default_random_engine generator(seed);
         // 第一个参数为高斯分布的平均值，第二个参数为标准差
-        normal_distribution<float> distribution(0, 1);
-        float obs_acc = obs_c->get_acc();
+        float obs_acc = obs_c->get_a();
+        normal_distribution<float> distribution(obs_acc, 1);
+
         for (int i = 0; i < 10; ++i) {
-            float sam = distribution(generator)%2;
-            assert(sam >= -2 && sam <= 2);
-            acc_sample.push_back(obs_acc - sam);
+            float sam = distribution(generator);
+            // assert(sam >= -2 && sam <= 2);
+            acc_sample.push_back(sam);
         }
 
         // 角度修正后的单位向量 similarity calculate
@@ -156,12 +171,15 @@ void CarModel::carModel(cv::Mat &map) {
                 float ratio = abs(v_re)/ego->get_v();  // obj_v > 0, 一般不会大于2倍ego, ratio (0,1)
                 k_d = (1+exp(-ratio)) * (obs_d[1]/obs_d[0]);  // (1.36,2)*w/l
             } else {
-                k_d = 1 + log2(1+v_revised)
+                k_d = 1 + log2(1+v_re);
             }
 
         }
 
-        buildField();  // TODO
+
+        vector<float> lo = {obs_c->get_x(), obs_c->get_y(), obs_c->get_z()};
+        buildField(map, lo, obs_d, k_d,
+            d_v, acc_sample, obs_c->get_v(), obs_c->get_yaw());  // TODO
     }
 }
 

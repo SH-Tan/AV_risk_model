@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -11,10 +12,10 @@ namespace riskfield {
 class ObsCar {
     public:
 
-        ObsCar(vector<float> dimension = {0,0,0}, vector<float> location = {0,0,0}, float y = 0, float v = 0, float a = 0)
+        ObsCar(vector<float> dimension, vector<float> location, float y, float v, float a, string type_ = "")
                 : l(dimension[0]), w(dimension[1]), h(dimension[2]),
                 x(location[0]), y(location[1]), z(location[2]),
-                yaw(y), velocity(v), acc(a) {}         // 构造函数
+                yaw(y), velocity(v), acc(a), type(type_) {}         // 构造函数
 
         ~ObsCar() {}
 
@@ -45,6 +46,7 @@ class ObsCar {
         float yaw; // angle
         float velocity;
         float acc;
+        string type;
 
 };
 
