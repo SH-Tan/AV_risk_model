@@ -93,6 +93,7 @@ demo_EXTERNAL_OBJECTS =
 demo: CMakeFiles/demo.dir/src/main_test.cpp.o
 demo: CMakeFiles/demo.dir/build.make
 demo: libmodel.a
+demo: libmodel.a
 demo: CMakeFiles/demo.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/tan/AV_risk_model/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable demo"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/demo.dir/link.txt --verbose=$(VERBOSE)

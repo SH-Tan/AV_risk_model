@@ -9,20 +9,23 @@ project(AV_riskfield
         )
 
 ## opencv
-set(OpenCV_DIR /usr/local/opencv4/lib/cmake/opencv4)
-set(OpenCV_INCLUDE_DIRS /usr/local/opencv4/include/opencv4)
+set(OpenCV_INCLUDE_DIRS /home/tan/opencv-3.4.16/include/opencv)
+set(OpenCV_INCLUDE_DIRS /home/tan/opencv-3.4.16/include/opencv2)
+
 
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3.4.16 REQUIRED)
 
-set(CMAKE_CXX_STANDARD 14)
+file(GLOB_RECURSE MODEL_LIB_SRC
+        src/model/*.cpp
+        )
+add_library(model STATIC ${MODEL_LIB_SRC})
 
-add_executable(example_cmake
-        CMakeLists.txt
-        example.cpp)
+add_executable(demo src/main_test.cpp)
 
-target_link_libraries(example_cmake
+target_link_libraries(demo model
+        model
         -I/usr/local/opencv4
         -I/usr/local/opencv4/include
         -L/usr/local/opencv4/lib
@@ -73,11 +76,3 @@ message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
 message(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 
-file(GLOB_RECURSE MODEL_LIB_SRC
-        src/model/*.cpp
-        )
-add_library(model STATIC ${MODEL_LIB_SRC})
-
-
-add_executable(demo src/main_test.cpp)
-target_link_libraries(demo model)

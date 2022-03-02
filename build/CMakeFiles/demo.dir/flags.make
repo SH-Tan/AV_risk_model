@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/tan/AV_risk_model/include -I/home/tan/opencv-3.4.16/include/opencv2
 
 CXX_FLAGS =  -fPIC -Wall -Wextra -Werror -march=native -g -O0 -ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls -std=gnu++17
 
