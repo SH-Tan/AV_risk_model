@@ -1,0 +1,4 @@
+/home/tan/AV_risk_model/build/CMakeFiles/rebuild_cache.dir
+/home/tan/AV_risk_model/build/CMakeFiles/edit_cache.dir
+/home/tan/AV_risk_model/build/CMakeFiles/demo.dir
+/home/tan/AV_risk_model/build/CMakeFiles/model.dir

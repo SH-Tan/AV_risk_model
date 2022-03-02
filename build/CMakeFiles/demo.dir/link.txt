@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -Wall -Wextra -Werror -march=native -g -O0 -ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls  -fPIC CMakeFiles/demo.dir/src/main_test.cpp.o -o demo  libmodel.a 
