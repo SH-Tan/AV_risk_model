@@ -1,2 +1,0 @@
-/usr/bin/ar qc libmodel.a  -fPIC CMakeFiles/model.dir/src/model/car_risk_model.cpp.o CMakeFiles/model.dir/src/model/road_risk_model.cpp.o CMakeFiles/model.dir/src/model/small_dynamic_model.cpp.o
-/usr/bin/ranlib libmodel.a
