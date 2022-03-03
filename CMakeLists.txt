@@ -24,29 +24,7 @@ add_library(model STATIC ${MODEL_LIB_SRC})
 
 add_executable(demo src/main_test.cpp)
 
-target_link_libraries(demo model
-        model
-        -I/usr/local/opencv4
-        -I/usr/local/opencv4/include
-        -L/usr/local/opencv4/lib
-        -lopencv_dnn
-        -lopencv_ml
-        -lopencv_objdetect
-        -lopencv_shape -lopencv_stitching
-        -lopencv_superres
-        -lopencv_videostab
-        -lopencv_calib3d
-        -lopencv_features2d
-        -lopencv_highgui
-       -lopencv_videoio
-        -lopencv_imgcodecs
-        -lopencv_video
-        -lopencv_photo
-        -lopencv_imgproc
-        -lopencv_flann
-        -lopencv_core
-        -lpthread
-        )
+target_link_libraries(demo model)
 
 
 ## Compile as C++17
@@ -64,7 +42,7 @@ endif ()
 set(CMAKE_BUILD_TYPE Debug)
 
 # Compiler flags.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wextra -Werror -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wextra -march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
 set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fPIC")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fPIC")
