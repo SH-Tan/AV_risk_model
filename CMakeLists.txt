@@ -13,18 +13,21 @@ set(OpenCV_INCLUDE_DIRS /home/tan/opencv-3.4.16/include/opencv)
 set(OpenCV_INCLUDE_DIRS /home/tan/opencv-3.4.16/include/opencv2)
 
 
+# 添加头文件
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
 find_package(OpenCV 3.4.16 REQUIRED)
 
+# generate library
 file(GLOB_RECURSE MODEL_LIB_SRC
         src/model/*.cpp
-        )
-add_library(model STATIC ${MODEL_LIB_SRC})
+)
+add_library(model SHARED ${MODEL_LIB_SRC})
 
 add_executable(demo src/main_test.cpp)
 
-target_link_libraries(demo model)
+target_link_libraries(demo ${OpenCV_LIBS}  model)
+include_directories("${PROJECT_SOURCE_DIR}/src/include")
 
 
 ## Compile as C++17
@@ -42,13 +45,9 @@ endif ()
 set(CMAKE_BUILD_TYPE Debug)
 
 # Compiler flags.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall -Wextra -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -march=native")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls")
-set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fPIC")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fPIC")
-set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -fPIC")
 
-set(GCC_COVERAGE_LINK_FLAGS    "-fPIC")
 message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
 message(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")

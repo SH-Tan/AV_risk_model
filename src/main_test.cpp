@@ -1,5 +1,3 @@
-#include "ego.hpp"
-#include "obscar.hpp"
 #include "road_risk_model.h"
 #include "car_risk_model.h"
 
@@ -36,7 +34,7 @@ string o2_type = "Car";
 
 
 int main() {
-    EgoCar* ego = EgoCar::get_ego(ego_dimension, ego_location, ego_y, ego_v, ego_a);
+    EgoCar::refresh_ego(ego_dimension, ego_location, ego_y, ego_v, ego_a);
     ObsCar* o1 = new ObsCar(o1_dimension, o1_location, o1_y, o1_v, o1_a, o1_type);
     ObsCar* o2 = new ObsCar(o2_dimension, o2_location, o2_y, o2_v, o2_a, o2_type);
 
@@ -47,7 +45,7 @@ int main() {
 
     /** car model **/
     vector<ObsCar*> obslist = {o1, o2};
-    CarModel* car_model = new CarModel(ego, obslist);
+    CarModel* car_model = new CarModel(obslist);
 
     road_model->LaneModel(map);
     road_model->BoarderModel(map);

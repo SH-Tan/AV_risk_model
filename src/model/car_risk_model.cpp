@@ -1,6 +1,4 @@
 #include "car_risk_model.h"
-#include "ego.hpp"
-#include "obscar.hpp"
 
 #include <iostream>
 #include <cmath>
@@ -16,12 +14,8 @@ using namespace std;
 
 namespace riskfield {
 
-CarModel::CarModel(EgoCar *car, const vector<ObsCar*> &obs_list):ego(car), obs_list_(obs_list) {}
+CarModel::CarModel(const vector<ObsCar*> &obs_list):obs_list_(obs_list) {}
 CarModel::~CarModel() {
-    if (ego != nullptr) {
-        delete ego;
-        ego = nullptr;
-    }
     for (auto o : obs_list_) {
         delete o;
     }
@@ -116,6 +110,8 @@ void CarModel::normV(vector<float> &vec) {
 }
 
 void CarModel::carModel(cv::Mat &map) {
+    EgoCar* ego = EgoCar::get_car();
+    assert(ego != nullptr);
     for (auto obs_c : obs_list_) {
         vector<float> obs_d = obs_c->get_dimension();
         vector<float> d_v = {(ego->get_x())-(obs_c->get_x()), (ego->get_y())-(obs_c->get_y())};

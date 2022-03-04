@@ -38,7 +38,7 @@ namespace riskfield {
 
 class CarModel {
     public:
-        CarModel(EgoCar *car, const vector<ObsCar*> &obs_list);
+        CarModel(const vector<ObsCar*> &obs_list);
         ~CarModel();
 
         /**
@@ -99,7 +99,6 @@ class CarModel {
 
 
     private:
-        EgoCar *ego;
         vector<ObsCar*> obs_list_;
 };
 
