@@ -35,10 +35,7 @@ class EgoCar {
         }
 
         static EgoCar* get_car() {
-            if (m_ego != nullptr) {
-                return m_ego;
-            }
-            return nullptr;
+            return m_ego;
         }
 
         float get_x() const { return x; }

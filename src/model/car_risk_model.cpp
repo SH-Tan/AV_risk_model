@@ -21,6 +21,12 @@ CarModel::~CarModel() {
     }
 }
 
+void updateMap(cv::Mat& map, int i, int j, float val) {
+    map.at<Vec3f>(i,j)[0] = val;
+    map.at<Vec3f>(i,j)[1] = val;
+    map.at<Vec3f>(i,j)[2] = val;
+}
+
 float getMold(const vector<float>& vec){   //求向量的模长
     int n = vec.size();
     float sum = 0.0;
@@ -69,6 +75,7 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         float tan_d;
         int n = k_a.size();
         float max_E = 1.0;
+        float val = 0.0;
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < col; ++j) {
                 axis = rotateAxis(i, j, yaw);
@@ -81,9 +88,11 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
                     ss_1 = x_d2 + x_d1;
                     k_first = sqrt(ss_1) < 4 ? 4 : sqrt(ss_1);
                     tan_d = d_v[1]/d_v[0];
-                    map.at<float>(i,j) += calE(tan_d, a, k_first)/n;
+                    val += calE(tan_d, a, k_first)/n;
                 }
-                max_E = max(max_E, map.at<float>(i,j));
+                updateMap(map, i, j, val);
+                val = 0.0;
+                max_E = max(max_E, map.at<Vec3f>(i,j)[0]);
 
             }
         }
@@ -92,7 +101,8 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         if (max_E > 1) {
             for (int i = 0; i < row; ++i) {
                 for (int j = 0; j < col; ++j) {
-                    map.at<float>(i,j) /= max_E;
+                    val = map.at<Vec3f>(i,j)[0] / max_E;
+                    updateMap(map, i, j, val);
                 }
             }
         }
