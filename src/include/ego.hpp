@@ -31,7 +31,6 @@ class EgoCar {
             update_ego(car, dimension, location, y, v, a);
             m_ego = car;
             // return car;
-
         }
 
         static EgoCar* get_car() {
@@ -92,6 +91,7 @@ class EgoCar {
                 ~Deletor() {
                     if(EgoCar::m_ego != nullptr)
                         delete EgoCar::m_ego;
+                        m_ego = nullptr;
                 }
         };
         static Deletor deletor;

@@ -1,5 +1,6 @@
 #include "road_risk_model.h"
 #include "car_risk_model.h"
+#include "draw.hpp"
 
 #include <string>
 #include <cmath>
@@ -43,19 +44,35 @@ int main() {
     // waitKey();
 
     /** road model **/
-    RoadModel* road_model = new RoadModel(16);  // the width of the road model
+    RoadModel* road_model = new RoadModel(16, 200);  // the width of the road model
+
+    vector<float> y;  // yellow lane set
+    vector<float> w;  // white lane set
 
     /** car model **/
     vector<ObsCar*> obslist = {o1, o2};
     CarModel* car_model = new CarModel(obslist);
 
-    road_model->LaneModel(map);
+    /** Lane **/
+    road_model->LaneModel(map, y, w);
     road_model->BoarderModel(map);
 
+    /** car **/
     car_model->carModel(map);
+
+    /** draw **/
+    Draw *draw_pen = new Draw();
+
+    draw_pen->norm2draw(map);
 
     imshow("risk distribution", map);
     waitKey();
+
+    delete o1;
+    delete o2;
+    delete road_model;
+    delete car_model;
+    delete draw_pen;
 
     return 0;
 }

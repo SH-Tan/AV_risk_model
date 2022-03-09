@@ -27,6 +27,7 @@
 #include <thread>
 #include <stack>
 #include <vector>
+#include <atomic>
 
 using namespace std;
 using namespace cv;
@@ -36,7 +37,7 @@ namespace riskfield {
 class RoadModel {
     public:
 
-        RoadModel(float w);
+        RoadModel(float w = 0, float st = 0);
         ~RoadModel();
 
         /*
@@ -47,7 +48,7 @@ class RoadModel {
          * lane type: dict {'yd', num; 'bd', num; 'br', num}
          * ego_car struct
          */
-        void LaneModel(cv::Mat &map);
+        void LaneModel(cv::Mat &map, vector<float> y, vector<float> w);
 
         /*
          * args: 道路总宽, map, ego
@@ -59,6 +60,7 @@ class RoadModel {
         const float r = 1/exp(20);
         float k = 0.4;
         float width;  // 车道总宽
+        float s = 0;  // 车道坐标开始
 
         // Lane const parameters
         const float Ay = exp(10);  // yellow
