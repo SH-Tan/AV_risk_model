@@ -39,12 +39,17 @@ int main() {
     ObsCar* o1 = new ObsCar(o1_dimension, o1_location, o1_y, o1_v, o1_a, o1_type);
     ObsCar* o2 = new ObsCar(o2_dimension, o2_location, o2_y, o2_v, o2_a, o2_type);
 
-    Mat map = Mat::zeros(320, 480, CV_32FC3);
+    Mat mapRode = Mat::zeros(320, 480, CV_32FC3);
+    Mat mapCar = Mat::zeros(320, 480, CV_32FC3);
+    Mat map = Mat::zeros(320, 480, CV_8UC3);
     // imshow("ori map", map);
     // waitKey();
 
+    /** draw **/
+    Draw *draw_pen = new Draw();
+
     /** road model **/
-    RoadModel* road_model = new RoadModel(16, 200);  // the width of the road model
+    RoadModel* road_model = new RoadModel(40, 100);  // the width of the road model
 
     vector<float> y;  // yellow lane set
     vector<float> w;  // white lane set
@@ -54,22 +59,23 @@ int main() {
     CarModel* car_model = new CarModel(obslist);
 
     /** Lane **/
-    road_model->LaneModel(map, y, w);
-    road_model->BoarderModel(map);
+    road_model->LaneModel(mapRode, y, w);
+    // draw_pen->printMap(mapRode);
+
+    road_model->BoarderModel(mapRode);
+    // draw_pen->printMap(mapRode);
 
     /** car **/
-    car_model->carModel(map);
+    // car_model->carModel(mapCar);
+    // draw_pen->printMap(mapCar);
 
-    /** draw **/
-    Draw *draw_pen = new Draw();
-
-    draw_pen->norm2draw(map);
+    draw_pen->norm2draw(mapRode);
+    draw_pen->convert(mapRode, map);
+    // draw_pen->printMap(map);
 
     imshow("risk distribution", map);
     waitKey();
 
-    delete o1;
-    delete o2;
     delete road_model;
     delete car_model;
     delete draw_pen;

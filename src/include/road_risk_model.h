@@ -57,14 +57,14 @@ class RoadModel {
 
     private:
         // Boarder const parameters
-        const float r = 1/exp(20);
-        float k = 0.4;
+        // float r = 1/exp(160);
+        const float k = 0.8;
         float width;  // 车道总宽
         float s = 0;  // 车道坐标开始
 
         // Lane const parameters
-        const float Ay = exp(10);  // yellow
-        const float Aw = exp(8);   // white
+        const float Ay = exp(5);  // yellow
+        const float Aw = exp(2);   // white
         const float a = 2;  // 控制幅度的参数
 
 };

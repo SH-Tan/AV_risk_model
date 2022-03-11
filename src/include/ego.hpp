@@ -89,9 +89,10 @@ class EgoCar {
         class Deletor {
             public:
                 ~Deletor() {
-                    if(EgoCar::m_ego != nullptr)
+                    if(EgoCar::m_ego != nullptr) {
                         delete EgoCar::m_ego;
-                        m_ego = nullptr;
+                        EgoCar::m_ego = nullptr;
+                    }
                 }
         };
         static Deletor deletor;

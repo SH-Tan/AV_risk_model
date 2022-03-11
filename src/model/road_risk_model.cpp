@@ -49,18 +49,20 @@ void RoadModel::LaneModel(cv::Mat &map, vector<float> y, vector<float> w) {
     // yellow lane
     for (auto ye : y) {
         for (int i = s; i < s + width; i++) {
-            int tmp = r*(exp(abs(i-Yl)/k)-1) + r*(exp(abs(i-Yr)/k)-1);
+            double tmp = Ay*(exp(-pow((i-ye),2)/2*pow(a,2)));  // TODO error
             val = tmp > 0 ? tmp : 0.0;
+            // cout << val << " ";
             for (int j = 0; j < col; ++j) {
                 updateMap1(map, i, j, val);
             }
         }
+        cout << endl;
     }
 
     // white lane
     for (auto wh : w) {
         for (int i = s; i < s + width; i++) {
-            int tmp = r*(exp(abs(i-Yl)/k)-1) + r*(exp(abs(i-Yr)/k)-1);
+            double tmp = Ay*(exp(-pow((i-wh),2)/2*pow(a,2)));
             val = tmp > 0 ? tmp : 0.0;
             for (int j = 0; j < col; ++j) {
                 updateMap1(map, i, j, val);
@@ -109,8 +111,10 @@ void RoadModel::BoarderModel(cv::Mat &map) {
     float Yl = 3*width/4 + s;
     float Yr = width/4 + s;
     float val = 0.0;
+
     for (int i = s; i < s + width; i++) {
-        int tmp = r*(exp(abs(i-Yl)/k)-1) + r*(exp(abs(i-Yr)/k)-1);
+    double tmp = (exp(abs(i-Yl)/k)-1)/exp(width*k) + (exp(abs(i-Yr)/k)-1)/exp(width*k);
+        
         val = tmp > 0 ? tmp : 0.0;
         for (int j = 0; j < col; ++j) {
             updateMap1(map, i, j, val);
