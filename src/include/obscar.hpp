@@ -50,6 +50,6 @@ class ObsCar {
 
 };
 
-};  // riskfield
+}  // riskfield
 
 #endif  // __OBS_CAR_STRUCT_H

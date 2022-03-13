@@ -192,4 +192,4 @@ void CarModel::carModel(cv::Mat &map) {
     }
 }
 
-};  // riskfield
+}  // riskfield

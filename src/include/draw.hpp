@@ -41,10 +41,10 @@ class Draw {
             assert(row > 0 && col > 0);
         
             for (int i = 0; i < row; i++) {
-                for (int j = 0; j < col; ++j) {
-                    if (ori.at<Vec3f>(i, j)[0] > 0) {
-                        cout << ori.at<Vec3f>(i, j) << endl;
-                    }
+                if (ori.at<Vec3f>(i, 0)[0] > 0) {
+                    cout << ori.at<Vec3f>(i, 0) << endl;
+                }
+                for (int j = 0; j < col; ++j) { 
                     dst.at<Vec3b>(i, j)[0] = saturate_cast<uchar>(ori.at<Vec3f>(i, j)[0]);
 					dst.at<Vec3b>(i, j)[1] = saturate_cast<uchar>(alpha*ori.at<Vec3f>(i, j)[1]);
 					dst.at<Vec3b>(i, j)[2] = saturate_cast<uchar>(ori.at<Vec3f>(i, j)[2]);
@@ -107,6 +107,6 @@ class Draw {
         double val = 0.0;
 };
 
-};
+}  // riskfield
 
 #endif  //DRAW_SHOW_H

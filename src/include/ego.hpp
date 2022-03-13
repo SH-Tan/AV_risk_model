@@ -77,7 +77,7 @@ class EgoCar {
             car->yaw = y;
             car->velocity = v;
             car->acc = a;
-        };
+        }
 
         float l, w, h;  // long, width, height
         float x, y, z;  // location
@@ -102,7 +102,7 @@ class EgoCar {
 atomic<EgoCar*> EgoCar::m_ego{nullptr};
 EgoCar::Deletor EgoCar::deletor;
 
-};  // riskfield
+}  // riskfield
 
 #endif  // __EGO_CAR_STRUCT_H
 

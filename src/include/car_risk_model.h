@@ -86,7 +86,7 @@ class CarModel {
          * @param d_v 
          * @param k_a 
          * @param v_r 
-         * @param yaw 
+         * @param yaw
          */
         void buildField(Mat &map, vector<float> location, vector<float> dimension, float k_d,
                 vector<float> d_v, vector<float> k_a, float v_r, float yaw);
@@ -95,7 +95,7 @@ class CarModel {
          * @brief 
          * 入口函数
          */
-        void carModel(cv::Mat &map);
+        void carModel(Mat &map);
 
 
     private:

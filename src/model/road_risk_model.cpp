@@ -122,4 +122,4 @@ void RoadModel::BoarderModel(cv::Mat &map) {
     }
 }
 
-};  // riskfield
+}  // riskfield

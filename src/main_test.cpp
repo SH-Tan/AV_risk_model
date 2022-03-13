@@ -10,14 +10,14 @@ using namespace riskfield;
 using namespace cv;
 
 /** ego **/
-vector<float> ego_dimension{4,2.5,2};  // l w h
+vector<float> ego_dimension{4, 2.5, 2};  // l w h
 vector<float> ego_location{202, 200, 1};
 float ego_y = 0*M_PI/180;
 float ego_v = 20;
 float ego_a = 5;
 
 /** obs **/
-vector<float> o1_dimension{4,2.5,2};
+vector<float> o1_dimension{4, 2.5, 2};
 vector<float> o1_location{205, 192, 1};
 float o1_y = 30*M_PI/180;
 float o1_v = 25;
@@ -25,7 +25,7 @@ float o1_a = 10;
 string o1_type = "Car";
 
 
-vector<float> o2_dimension{4,2.5,2};
+vector<float> o2_dimension{4, 2.5, 2};
 vector<float> o2_location{202, 190, 1};
 float o2_y = 0*M_PI/180;
 float o2_v = 15;
@@ -69,7 +69,7 @@ int main() {
     // car_model->carModel(mapCar);
     // draw_pen->printMap(mapCar);
 
-    draw_pen->norm2draw(mapRode);
+    // draw_pen->norm2draw(mapRode);
     draw_pen->convert(mapRode, map);
     // draw_pen->printMap(map);
 
