@@ -1,5 +1,5 @@
-#ifndef __OBS_CAR_STRUCT_H
-#define __OBS_CAR_STRUCT_H
+#ifndef __OBS_CYC_STRUCT_H
+#define __OBS_CYC_STRUCT_H
 
 #include <cmath>
 #include <vector>
@@ -9,15 +9,15 @@ using namespace std;
 
 namespace riskfield {
 
-class ObsCar {
+class ObsCyc {
     public:
 
-        ObsCar(vector<float> &dimension, vector<float> &location, float &y, float &v, float &a, string type_ = "")
+        ObsCyc(vector<float> &dimension, vector<float> &location, float &y, float &v, string type_ = "")
                 : l(dimension[0]), w(dimension[1]), h(dimension[2]),
                 x(location[0]), y(location[1]), z(location[2]),
-                yaw(y), velocity(v), acc(a), type(type_) {}         // 构造函数
+                yaw(y), velocity(v), type(type_) {}         // 构造函数
 
-        ~ObsCar() {}
+        ~ObsCyc() {}
 
         float get_x() const { return x; }
 
@@ -34,22 +34,22 @@ class ObsCar {
 
         float get_v() const { return velocity; }
 
-        float get_a() const { return acc; }
+        // float get_a() const { return acc; }
 
 
     private:
-        ObsCar(const ObsCar&) = delete;              // copy cotr 明确拒绝
-        ObsCar& operator=(const ObsCar&) = delete;   // 明确拒绝 
+        ObsCyc(const ObsCyc&) = delete;              // copy cotr 明确拒绝
+        ObsCyc& operator=(const ObsCyc&) = delete;   // 明确拒绝 
 
         float l, w, h;  // long, width, height
         float x, y, z;  // location
         float yaw; // angle
         float velocity;
-        float acc;
+        // float acc;
         string type;
 
 };
 
 }  // riskfield
 
-#endif  // __OBS_CAR_STRUCT_H
+#endif  // __OBS_CYC_STRUCT_H

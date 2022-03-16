@@ -29,6 +29,8 @@
 #include <vector>
 #include <atomic>
 
+#include "lane.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -37,7 +39,7 @@ namespace riskfield {
 class RoadModel {
     public:
 
-        RoadModel(float w = 0, float st = 0);
+        RoadModel(vector<Lane*> l);
         ~RoadModel();
 
         /*
@@ -48,24 +50,33 @@ class RoadModel {
          * lane type: dict {'yd', num; 'bd', num; 'br', num}
          * ego_car struct
          */
-        void LaneModel(cv::Mat &map, vector<float> y, vector<float> w);
+        // void LaneModel(Mat &map, vector<float> y, vector<float> w);
 
         /*
          * args: 道路总宽, map, ego
          */
-        void BoarderModel(cv::Mat &map);
+        void BoundaryModel(Mat &map, unordered_map<string, float> &properties);
+
+        /*
+         * 入口函数
+         */
+        void buildLaneModel(Mat &map);
 
     private:
-        // Boarder const parameters
+        // Boundary const parameters
         // float r = 1/exp(160);
         const float k = 0.8;
-        float width;  // 车道总宽
-        float s = 0;  // 车道坐标开始
+        // float width;  // 车道总宽
+        // float s_w = 0;  // 车道宽坐标开始
+        // float length = 100;  // 车道长度
+        // float s_long = 0;  // 开始坐标
 
         // Lane const parameters
         const float Ay = exp(5);  // yellow
         const float Aw = exp(2);   // white
         const float a = 2;  // 控制幅度的参数
+
+        vector<Lane*> lane_list_;
 
 };
 

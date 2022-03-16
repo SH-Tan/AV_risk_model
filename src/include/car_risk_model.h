@@ -28,7 +28,7 @@
 #include <vector>
 
 // ego
-#include "ego.hpp"
+#include "ego.h"
 #include "obscar.hpp"
 
 using namespace std;

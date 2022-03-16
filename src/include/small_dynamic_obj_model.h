@@ -33,6 +33,12 @@ using namespace cv;
 namespace riskfield {
 
 class SmallObjModel {
+    public:
+
+
+    private:
+        // Pedestrian vector
+        // Cyclist vector
 
 };
 
