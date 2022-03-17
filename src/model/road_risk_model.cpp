@@ -10,6 +10,7 @@
 
 
 namespace riskfield {
+// static int index = 0;
 
 RoadModel::RoadModel(vector<Lane*> l):lane_list_(l) {}
 RoadModel::~RoadModel(){
@@ -122,22 +123,41 @@ void RoadModel::BoundaryModel(cv::Mat &map, unordered_map<string, float> &proper
     
     vector<float> axis;
 
-    float angle = properties["yaw"];
+    float angle = -properties["yaw"];
 
     // need adjust
-    float Yl = 3*properties["width"]/4 + properties["sw"];
-    float Yr = properties["width"]/4 + properties["sw"];
+    float Yl = (3*properties["width"]*cos(angle)/4)*cos(angle) + properties["sw"];
+    float Yr = (properties["width"]*cos(angle)/4)*cos(angle) + properties["sw"];
     float val = 0.0;
-    
 
-    for (int i = properties["sw"]; i < properties["sw"] + properties["width"]*cos(angle); i++) {      
+    float b = 0;
+    // cout << Yl << " " << Yr << endl;
+
+    for (int i = 0; i < properties["width"]; i++) {      
+        b = (i+properties["sw"]) - tan(angle)*properties["sl"];
+        float cur = i*cos(angle)*cos(angle)+ properties["sw"];
+        // cout << cur << " ";
+        double tmp = (exp(abs(cur-Yl)/k)-1)/exp(Yl-properties["sw"]) + (exp(abs(cur-Yr)/k)-1)/exp(Yl-properties["sw"]);
+        // cout << tan(angle) << " " << b << " " << tmp;
+        // cout << b << " ";
         for (int j = properties["sl"]; j < properties["sl"]+properties["length"]*cos(angle); ++j) {
             // axis = rotateAxisRoad(i, j, ego_yaw);  // ego's yaw
-            double tmp = (exp(abs(i-Yl)/k)-1)/exp(properties["width"]*k) + (exp(abs(i-Yr)/k)-1)/exp(properties["width"]*k);
             val = tmp > 0 ? tmp : 0.0;
-            updateMap1(map, i, j-i*tan(angle), val);
+            updateMap1(map, j*tan(angle)+b, j, val);
         }
+        // cout << endl;
     }
+
+    /**
+    for (int i = properties["sw"]; i < properties["width"]+properties["sw"]; ++i) {
+        for (int j = properties["sl"]; j < properties["sl"]+properties["length"]; ++j) {
+            // axis = rotateAxisRoad(i, j, ego_yaw);  // ego's yaw
+            // val = tmp > 0 ? tmp : 0.0;
+            cout << maptmp.at<Vec3f>(i,j)[0] << " ";
+        }
+        cout << endl;
+    }
+    **/
 }
 
 /*
@@ -149,9 +169,14 @@ void RoadModel::BoundaryModel(cv::Mat &map, unordered_map<string, float> &proper
  * string type;
  */
 void RoadModel::buildLaneModel(cv::Mat &map) {
-    unordered_map<string, float> properties;
-    for (auto lane : lane_list_) {
+    /** draw **/
+    // Draw *draw_pen = new Draw();
 
+    unordered_map<string, float> properties;
+
+    // for (auto lane : lane_list_) 
+    for (int i = 0; i < lane_list_.size(); i++) {
+        Lane* lane = lane_list_[i];
         string type = lane->get_type();
         properties["sl"] = lane->get_sl();
         properties["length"] = lane->get_l();
@@ -160,7 +185,7 @@ void RoadModel::buildLaneModel(cv::Mat &map) {
         properties["yaw"] = lane->get_yaw();
 
         if (type == "boundary") {
-
+            
             BoundaryModel(map, properties);
 
         } else if (type == "white lane") {

@@ -53,6 +53,16 @@ class RoadModel {
         // void LaneModel(Mat &map, vector<float> y, vector<float> w);
 
         /*
+         * white lane model
+         */
+        void WhiteModel(Mat &map, unordered_map<string, float> &properties);
+
+        /*
+         * yellow lane model
+         */
+        void YellowModel(Mat &map, unordered_map<string, float> &properties);
+
+        /*
          * args: 道路总宽, map, ego
          */
         void BoundaryModel(Mat &map, unordered_map<string, float> &properties);

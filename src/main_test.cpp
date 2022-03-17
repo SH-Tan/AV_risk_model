@@ -43,7 +43,7 @@ int main() {
 
     Lane* l1 = new Lane(0,100,100,40,0,"boundary");
     Lane* l2 = new Lane(100,100,100,40,30*M_PI/180,"boundary");
-    vector<Lane*> lane_list = {l1,l2};
+    vector<Lane*> lane_list = {l1, l2};
 
     Mat mapRoad = Mat::zeros(320, 480, CV_32FC3);
     Mat mapCar = Mat::zeros(320, 480, CV_32FC3);
@@ -86,6 +86,7 @@ int main() {
     delete road_model;
     delete car_model;
     delete draw_pen;
+
 
     return 0;
 }
