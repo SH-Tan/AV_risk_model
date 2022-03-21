@@ -50,7 +50,6 @@ class RoadModel {
          * lane type: dict {'yd', num; 'bd', num; 'br', num}
          * ego_car struct
          */
-        // void LaneModel(Mat &map, vector<float> y, vector<float> w);
 
         /*
          * white lane model
@@ -82,8 +81,8 @@ class RoadModel {
         // float s_long = 0;  // 开始坐标
 
         // Lane const parameters
-        const float Ay = exp(5);  // yellow
-        const float Aw = exp(2);   // white
+        const float Ay = exp(7);  // yellow
+        const float Aw = exp(5);   // white
         const float a = 2;  // 控制幅度的参数
 
         vector<Lane*> lane_list_;

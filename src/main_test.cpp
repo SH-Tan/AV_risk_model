@@ -41,9 +41,13 @@ int main() {
     ObsCar* o2 = new ObsCar(o2_dimension, o2_location, o2_y, o2_v, o2_a, o2_type);
     EgoCar* ego = EgoCar::get_car();
 
-    Lane* l1 = new Lane(0,100,100,40,0,"boundary");
-    Lane* l2 = new Lane(100,100,100,40,30*M_PI/180,"boundary");
-    vector<Lane*> lane_list = {l1, l2};
+    // Lane* l1 = new Lane(0,100,100,40,0,100,"boundary");
+    // Lane* l2 = new Lane(100,100,100,40,30*M_PI/180,100,"boundary");
+    // Lane* l3 = new Lane(0,100,100,40,0,110,"white lane");
+    // Lane* l4 = new Lane(100,100,100,40,30*M_PI/180,110,"white lane");
+    // Lane* l5 = new Lane(0,100,100,40,0,120,"yellow lane");
+    // Lane* l6 = new Lane(100,100,100,40,30*M_PI/180,120,"yellow lane");
+    // vector<Lane*> lane_list = {l1, l2, l3, l4, l5, l6};
 
     Mat mapRoad = Mat::zeros(320, 480, CV_32FC3);
     Mat mapCar = Mat::zeros(320, 480, CV_32FC3);
@@ -55,27 +59,20 @@ int main() {
     Draw *draw_pen = new Draw();
 
     /** road model **/
-    RoadModel* road_model = new RoadModel(lane_list);  // the width of the road model
-
-    vector<float> y;  // yellow lane set
-    vector<float> w;  // white lane set
+    // RoadModel* road_model = new RoadModel(lane_list);  // the width of the road model
 
     /** car model **/
     vector<ObsCar*> obslist = {o1, o2};
     CarModel* car_model = new CarModel(obslist);
 
     /** Lane **/
-    // road_model->LaneModel(mapRoad, y, w);
-    // draw_pen->printMap(mapRode);
-
-    road_model->buildLaneModel(mapRoad);
+    // road_model->buildLaneModel(mapRoad);
     // draw_pen->printMap(mapRode);
 
     /** car **/
-    // car_model->carModel(mapCar);
+    car_model->carModel(mapCar);
     // draw_pen->printMap(mapCar);
-
-    // 
+ 
     draw_pen->norm2draw(mapRoad);
     draw_pen->convert(mapRoad, map);
     // draw_pen->printMap(map);

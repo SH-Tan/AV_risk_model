@@ -12,8 +12,8 @@ namespace riskfield {
 class Lane {
     public:
 
-        Lane(const float &start_l, const float &l, const float &start_w, const float &w, const float &yaw_, string type_ = "")
-                : sl(start_l), length(l), sw(start_w), width(w), yaw(yaw_), type(type_) {}  // 构造函数
+        Lane(const float &start_l, const float &l, const float &start_w, const float &w, const float &yaw_, const float &start, string type_ = "")
+                : sl(start_l), length(l), sw(start_w), width(w), yaw(yaw_), st(start), type(type_) {}  // 构造函数
 
         ~Lane() {}
 
@@ -27,6 +27,8 @@ class Lane {
         
         float get_yaw() const { return yaw; }
 
+        float get_st() const { return st; }
+
         string get_type() const { return type; }
 
 
@@ -39,6 +41,7 @@ class Lane {
         float sw;  // 宽度开始坐标,图像坐标系
         float width;  // 宽度
         float yaw; // angle
+        float st;  // 该车道线在图像坐标系上开始的坐标
         string type;
 
 };
