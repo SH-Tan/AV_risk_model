@@ -31,7 +31,8 @@ class Draw {
         ~Draw(){}
 
         void convert(const Mat& ori, Mat& dst) {
-            float alpha = 1.8;
+            float alpha = 0.8;
+            float beta = 0.6;
 
             int row = 0;
             int col = 0;
@@ -47,7 +48,7 @@ class Draw {
                 for (int j = 0; j < col; ++j) { 
                     dst.at<Vec3b>(i, j)[0] = saturate_cast<uchar>(ori.at<Vec3f>(i, j)[0]);
 					dst.at<Vec3b>(i, j)[1] = saturate_cast<uchar>(alpha*ori.at<Vec3f>(i, j)[1]);
-					dst.at<Vec3b>(i, j)[2] = saturate_cast<uchar>(ori.at<Vec3f>(i, j)[2]);
+					dst.at<Vec3b>(i, j)[2] = saturate_cast<uchar>(beta*ori.at<Vec3f>(i, j)[2]);
                 }
             }
         }

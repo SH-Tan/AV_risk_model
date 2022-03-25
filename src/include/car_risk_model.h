@@ -58,7 +58,7 @@ class CarModel {
          * @param k_first 
          * @return float 
          */
-        float calE(float tan_d, float a, float k_first);
+        float calE(float similarity, float a, float k_first);
 
         /**
          * @brief convert the angle
@@ -68,7 +68,7 @@ class CarModel {
          * @param r 
          * @return vector<float> 
          */
-        vector<float> rotateAxis(float x, float y, float r);
+        void rotateAxis(float x, float y, float r, vector<float> &ret);
 
         /**
          * @brief 
@@ -89,7 +89,7 @@ class CarModel {
          * @param yaw
          */
         void buildField(Mat &map, vector<float> location, vector<float> dimension, float k_d,
-                vector<float> d_v, vector<float> k_a, float v_r, float yaw);
+                vector<float> d_v, vector<float> k_a, float v_r, float yaw, float similarity);
 
         /**
          * @brief 
