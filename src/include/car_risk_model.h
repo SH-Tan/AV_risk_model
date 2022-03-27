@@ -68,7 +68,7 @@ class CarModel {
          * @param r 
          * @return vector<float> 
          */
-        void rotateAxis(float x, float y, float r, vector<float> &ret);
+        void rotateAxis(float x, float y, float r, vector<float> &ret, int x1, int y1);
 
         /**
          * @brief 

@@ -30,7 +30,7 @@ class ObsCar {
             return dimension;
         }
 
-        float get_yaw() const { return -yaw; }  // 图像坐标系的问题
+        float get_yaw() const { return yaw; }  // 图像坐标系的问题
 
         float get_v() const { return velocity; }
 

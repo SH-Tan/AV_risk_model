@@ -27,7 +27,7 @@ string o1_type = "Car";
 
 
 vector<float> o2_dimension{4, 2.5, 2};
-vector<float> o2_location{105, 80, 1};
+vector<float> o2_location{105, 100, 1};
 float o2_y = 0*M_PI/180;
 float o2_v = 25;
 float o2_a = 0.5;
@@ -80,6 +80,8 @@ int main() {
     // draw_pen->norm2draw(mapT);
     draw_pen->convert(mapT, map);
     // draw_pen->printMap(map);
+
+    cv::circle(map, Point(50,105), 3, Scalar(10,10, 200), FILLED);
 
     imshow("risk distribution", map);
     waitKey();

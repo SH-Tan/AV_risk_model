@@ -52,15 +52,22 @@ float CarModel::calE(float similarity, float a, float k_first) {
     return E;
 }
 
-void CarModel::rotateAxis(float x, float y, float r, vector<float> &ret) {
+/*
+x=(x1-x2)cosθ-(y1-y2)sinθ+x2
+
+y=(y1-y2)cosθ+(x1-x2)sinθ+y2
+*/
+void CarModel::rotateAxis(float x, float y, float r, vector<float> &ret, int x1, int y1) {
     assert(ret.size() == 2);
-    ret[0] = cos(r)*x + sin(r)*y;
-    ret[1] = -sin(r)*x + cos(r)*y;
+    ret[0] = cos(r)*(x-x1) - sin(r)*(y-y1) + x1;
+    ret[1] = sin(r)*(x-x1) + cos(r)*(y-y1) + y1;
 }
 
 void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimension, float k_d,
     vector<float> d_v, vector<float> k_a, float v, float yaw, float similarity) {
         float x = location[0], y = location[1];
+
+        cout << "x = " << x << " y = " << y << endl;
         float l = dimension[0], w = dimension[1];
         int row = map.rows;
         int col = map.cols;
@@ -81,7 +88,7 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         int n = k_a.size();
         vector<float> delta_x(n);
         for (int i = 0; i < n; ++i) {
-            delta_x[i] = ((v*1.5 + 0.5*k_a[i]*1.5*1.5)*5/18)/2;  // 加速度,速度,距离公式
+            delta_x[i] = ((v*1.5 + 0.5*k_a[i]*1.5*1.5)*5/18)/10;  // 加速度,速度,距离公式
         }
 
         /**
@@ -95,7 +102,7 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         float val = 0.0;
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < col; ++j) {
-                rotateAxis(i, j, yaw, axis);
+            rotateAxis(j, i, yaw, axis, y, x);
                 for (int i = 0; i < (int)k_a.size(); ++i) {
                     // k = exp(a*v);
                     k1_1 = l*k_d;
@@ -115,6 +122,7 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
             }
         }
         cout << "Max_E = " << max_E << endl;
+        /**
         // 归一化
         if (max_E > 1) {
             for (int i = 0; i < row; ++i) {
@@ -124,8 +132,7 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
                 }
             }
         }
-        
-
+        **/
 }
 
 void CarModel::normV(vector<float> &vec) {
@@ -139,12 +146,12 @@ void CarModel::normV(vector<float> &vec) {
 
 
 /* vector coordinates
- * ---------------------->x  
+ * ---------------------->y
  * |
  * |
  * |
  * |
- * y
+ * x
  */
 void CarModel::carModel(cv::Mat &map) {
     EgoCar* ego = EgoCar::get_car();  // get ego
@@ -152,14 +159,14 @@ void CarModel::carModel(cv::Mat &map) {
     
     for (auto obs_c : obs_list_) {
         vector<float> obs_d = obs_c->get_dimension();
-        vector<float> d_v = {(ego->get_y())-(obs_c->get_y()), (ego->get_x())-(obs_c->get_x())};
+        vector<float> d_v = {(ego->get_y())-(obs_c->get_y()), ((ego->get_x())-(obs_c->get_x()))};
         // normV(d_v); // normalize vector
         // cout << d_v[0] << " " << d_v[1] << endl;
 
         // Obs 修正
         float v_re = obs_c->get_v() - ego->get_v();
         float yaw_re = obs_c->get_yaw() - ego->get_yaw();
-        int yaw_sign = yaw_re >= 0 ? 1 : 0;
+        int yaw_sign = yaw_re >= 0 ? 1 : 0;  // coordinate related
 
         // sample accelerate Gaussian Distribution
         vector<float> acc_sample;
@@ -197,22 +204,24 @@ void CarModel::carModel(cv::Mat &map) {
             float v_r = v_re * similarity_sign;  // ego->obs, similarity_sign = -1
 
             if (!sign || (v_r < 0)) {  // 问题不大   
-                cout << "follow no ";     
+                cout << "follow no " << endl;   
                 float ratio = abs(v_re)/ego_v;  // obj_v > 0, 一般不会大于2倍ego, ratio (0,1)  TODO: check 
                 k_d = (1+exp(-ratio)) * (obs_d[1]/obs_d[0]);  // (1.368,2)*w/l   w/l = 0.625   目前ratio在(0.5,1)时, k_d < 1
             } else {
-                cout << "follow yes ";
+                cout << "follow yes " << endl;
                 k_d = 1 + log2(1+v_r);  // 横轴与垂直距离修正参数
             }
         } else {  // 非跟驰
-            int d_sign = d_v[1] >= 0 ? 1 : 0;  // 位置矢量, 角度逆时针
-            sign = ~(d_sign ^ yaw_sign);  // true risk up  同一象現
+            int d_sign = d_v[1] >= 0 ? 0 : 1;  // 位置矢量, 角度逆时针
+            // cout << "yaw = " << yaw_sign << " d sign = " << d_sign << endl;
+            // cout << "^ = " << (int)(d_sign ^ yaw_sign) << " ~ = " << !(d_sign ^ yaw_sign) << endl;
+            sign = !(d_sign ^ yaw_sign);  // true risk up  同一象現
             assert(sign == 1 || sign == 0);
             cout << "sign = " << sign << endl;
 
             k_d = 1;
             if (sign == 0) {
-                cout << "not follow no ";
+                cout << "not follow no " << endl;
                 float ratio = abs(v_re)/ego_v;  // obj_v > 0, 一般不会大于2倍ego, ratio (0,1)
                 k_d = (1+exp(-ratio)) * (obs_d[1]/obs_d[0]);  // (1.36,2)*w/l
             } else {
