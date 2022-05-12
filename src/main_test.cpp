@@ -6,6 +6,10 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <assert.h>
 
 using namespace riskfield;
 using namespace cv;
@@ -22,7 +26,7 @@ vector<float> o1_dimension{4, 2.5, 2};
 vector<float> o1_location{113, 60, 1};
 float o1_y = 30*M_PI/180;
 float o1_v = 15;
-float o1_a = 0.3;
+float o1_a = 3;
 string o1_type = "Car";
 
 
@@ -30,12 +34,46 @@ vector<float> o2_dimension{4, 2.5, 2};
 vector<float> o2_location{105, 100, 1};
 float o2_y = 0*M_PI/180;
 float o2_v = 25;
-float o2_a = 0.5;
+float o2_a = 5;
 string o2_type = "Car";
 
+vector<vector<string>> readF() {
+    cout << "in readF" << endl;
+    vector<vector<string>> user_arr;
+    ifstream fp("/home/tan/AV_risk_model/src/US-101.csv"); //定义声明一个ifstream对象，指定文件路径
+    string line;
+    getline(fp,line); //跳过列名，第一行不做处理
+    // cout << line << endl;
+    while (getline(fp,line)){ //循环读取每行数据
+        // cout << line << endl;
+        vector<string> data_line;
+        string number;
+		// 存成二维表结构
+		stringstream ss(line);//string数据流化
+        //将一行数据按'，'分割
+        while (getline(ss, number, ',')) { 
+            data_line.push_back(number);
+        }
+        user_arr.push_back(data_line); //插入到vector中
+    }
+    return user_arr;
+}
 
+void print(vector<vector<string>> &v) {
+    for (int i = 0; i < (int)v.size(); i++) {
+        for (int j = 0; j < (int)v[i].size(); j++) {
+            cout << v[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
 
 int main() {
+    // vector<vector<string>> car_data = readF();
+    // assert(car_data.size() > 0 && car_data[0].size() > 0);
+    // cout << car_data.size() << " " << car_data[0].size() << endl;
+    // print(car_data);
+
     EgoCar::refresh_ego(ego_dimension, ego_location, ego_y, ego_v, ego_a);
     ObsCar* o1 = new ObsCar(o1_dimension, o1_location, o1_y, o1_v, o1_a, o1_type);
     ObsCar* o2 = new ObsCar(o2_dimension, o2_location, o2_y, o2_v, o2_a, o2_type);

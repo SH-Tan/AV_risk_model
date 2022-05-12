@@ -88,7 +88,7 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         int n = k_a.size();
         vector<float> delta_x(n);
         for (int i = 0; i < n; ++i) {
-            delta_x[i] = ((v*1.5 + 0.5*k_a[i]*1.5*1.5)*5/18)/10;  // 加速度,速度,距离公式
+            delta_x[i] = ((v*0.1 + 0.5*k_a[i]*0.1*0.1)*5/18)/10;  // 加速度,速度,距离公式  s＝Vot+at²/2
         }
 
         /**
@@ -102,18 +102,18 @@ void CarModel::buildField(Mat &map, vector<float> location, vector<float> dimens
         float val = 0.0;
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < col; ++j) {
-            rotateAxis(j, i, yaw, axis, y, x);
-                for (int i = 0; i < (int)k_a.size(); ++i) {
+                rotateAxis(j, i, yaw, axis, y, x);
+                for (int h = 0; h < (int)k_a.size(); ++h) {
                     // k = exp(a*v);
                     k1_1 = l*k_d;
                     k1_2 = w;
                     x_d1 = pow((y-axis[0])/k1_1,2.0);
                     x_d2 = pow((x-axis[1])/k1_2,2.0); 
                     ss_1 = x_d2 + x_d1;
-                    k_first = sqrt(ss_1) < delta_x[i] ? delta_x[i] : sqrt(ss_1);
+                    k_first = sqrt(ss_1) < delta_x[h] ? sqrt(ss_1) : exp(sqrt(ss_1));
                     // cout << "k_first = " << k_first << " " << endl;
                     // tan_d = d_v[0]/d_v[1];
-                    val += 100*calE(similarity, k_a[i], k_first)/n;
+                    val += 100*calE(similarity, k_a[h], k_first)/n;
                     // cout << "val = " << val << endl;
                 }
                 updateMap(map, i, j, val);
@@ -175,7 +175,7 @@ void CarModel::carModel(cv::Mat &map) {
         default_random_engine generator(seed);
         // 第一个参数为高斯分布的平均值，第二个参数为标准差
         float obs_acc = obs_c->get_a();
-        normal_distribution<float> distribution(obs_acc, 0.2);
+        normal_distribution<float> distribution(obs_acc, 0.567);
 
         for (int i = 0; i < 10; ++i) {
             float sam = distribution(generator);

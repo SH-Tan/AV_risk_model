@@ -2,7 +2,7 @@
 接受障碍物信息,
 构建行车风险场.
 姓名: Shuhang Tan
-修改日期: 2022-2-21
+修改日期: 2022-5-12
 需要参数:
     静态障碍物:
     动态障碍物:
@@ -27,19 +27,28 @@
 #include <stack>
 #include <vector>
 
+#include "ped.hpp"
+
 using namespace std;
 using namespace cv;
 
 namespace riskfield {
 
-class SmallObjModel {
+class Pedestrian {
     public:
+        Pedestrian(const vector<ObsPed*> &ped_list);
+        ~Pedestrian();
 
+        /**v, dis, lambda, intend, TTC**/
+        void pdeModel(Mat &map);
 
+        double n1 = 0.4;
+        double n2 = 1-n1;
+
+        
     private:
         // Pedestrian vector
-        // Cyclist vector
-
+        vector<ObsPed*> ped_list_;   
 };
 
 }  // riskfield

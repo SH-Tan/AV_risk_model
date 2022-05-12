@@ -12,10 +12,9 @@ namespace riskfield {
 class ObsPed {
     public:
 
-        ObsPed(vector<float> &dimension, vector<float> &location, float &v, string type_ = "")
-                : l(dimension[0]), w(dimension[1]), h(dimension[2]),
-                x(location[0]), y(location[1]), z(location[2]),
-                velocity(v), type(type_) {}         // 构造函数
+        ObsPed(vector<float> &location, string type_ = "")
+                : x(location[0]), y(location[1]), z(location[2]),
+                  type(type_) {}         // 构造函数
 
         ~ObsPed() {}
 
@@ -25,14 +24,9 @@ class ObsPed {
 
         float get_z() const { return z; }
 
-        vector<float> get_dimension() const {
-            vector<float> dimension = {l, w, h};
-            return dimension;
-        }
+        string get_type() const { return type; }
 
         // float get_yaw() const { return yaw; }
-
-        float get_v() const { return velocity; }
 
         // float get_a() const { return acc; }
 
@@ -41,11 +35,8 @@ class ObsPed {
         ObsPed(const ObsPed&) = delete;              // copy cotr 明确拒绝
         ObsPed& operator=(const ObsPed&) = delete;   // 明确拒绝 
 
-        float l, w, h;  // long, width, height
         float x, y, z;  // location
-        // float yaw; // angle
-        float velocity;
-        // float acc;
+        
         string type;
 
 };

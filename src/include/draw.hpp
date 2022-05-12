@@ -43,7 +43,7 @@ class Draw {
         
             for (int i = 0; i < row; i++) {
                 if (ori.at<Vec3f>(i, 0)[0] > 0) {
-                    cout << ori.at<Vec3f>(i, 0) << endl;
+                    // cout << ori.at<Vec3f>(i, 0) << endl;
                 }
                 for (int j = 0; j < col; ++j) { 
                     dst.at<Vec3b>(i, j)[0] = saturate_cast<uchar>(ori.at<Vec3f>(i, j)[0]);
