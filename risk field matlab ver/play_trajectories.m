@@ -7,15 +7,15 @@ close all
 % Animation of NGSIM I-80 Vehicle Trajectories
 
 %load('lab_test.mat')
-%load('./data/1271.mat')
-%load('./data/1276.mat')
-%trajectories = cat (1,data1271, data1276);
+% load('./data/1271.mat')
+% load('./data/1276.mat')
+% trajectories = cat (1,data1271, data1276);
 
-% load('./data/car1259.mat')
-% load('./data/car1248.mat')
-% trajectories = cat(1, car1259, car1248);
+load('./data/car1259.mat')
+load('./data/car1248.mat')
+trajectories = cat(1, car1259, car1248);
 
-% 
+
 % load('change.mat')
 % trajectories = data;
 
@@ -61,11 +61,11 @@ for i=3:3
     for j=1:length(boundingBoxArr(:,1))
         hold on
         if(id_all(j) == 1259)
-            rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 0 0])
+            p=rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 0 0])
+        elseif(id_all(j) == 1267)
+            p=rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [0 1 0])
         elseif (class(j) == 2)
-            rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 1 0])
-        else
-            rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [0 1 0])
+            p=rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 1 0])
         end
     end
     
@@ -77,13 +77,15 @@ for i=3:3
     h(1) = plot(NaN,NaN,'sr', 'MarkerFaceColor',[1,0,0]);
     h(2) = plot(NaN,NaN,'sy', 'MarkerFaceColor',[1,1,0]);
     h(3) = plot(NaN,NaN,'sg', 'MarkerFaceColor',[0,1,0]);
-    lgd = legend(h, 'cut-in','nearby car', 'Location','northeast');
-    set(lgd,'FontSize',14)
     
+    lgd = legend(h, 'ego','preceding car', 'Location','northeast');
+    set(lgd,'FontSize',14)
+    g = get(p,'Parent');%对应p1所在的坐标轴
+    set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
     xlim(xLimit)
     ylim(yLimit)
-    xlabel('Longitude')
-    ylabel('Lateral')
+    xlabel('Length [m]')
+    ylabel('Width [m]')
     
     set(gca,'Ydir','reverse')
     grid on

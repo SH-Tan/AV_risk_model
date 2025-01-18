@@ -1,12 +1,13 @@
+
 clear
 clc
 
 % Section limits can be adjusted, here it is 200-800 feets (600 feets long)
-sectionLimits = [1 25];
+sectionLimits = [5 25];
 
 % Limits of x-y axis
 xLimit = [sectionLimits(1) sectionLimits(2)];
-yLimit = [0 14];
+yLimit = [2 12];
 
 col = xLimit(1):1:xLimit(2);
 row = yLimit(1):1:yLimit(2);
@@ -20,11 +21,13 @@ for i=25:25
     % boundingBoxArr = [longitudePos-len lateralPos-width/2 len width];
     
     % y x l w v a lane_id
-    ego = [10 8.5 3.5 1.5 20 1.5 3 0];
-    obs1 = [15 8.5 3.5 1.5 25 0.3 3 2 0];
-    obs2 = [8 8.5 3.5 1.5 15 0 3 2 0];
-    obs3 = [12 6 3.5 1.5 10 0.1 2 1 -10*pi/180];
-    obs = [obs3; obs2; obs1];
+    ego = [10 10 2.5 1 15 0 3 0];
+%     obs1 = [15 8.5 3.5 1.5 25 0.3 3 2 0];
+%     obs2 = [5 8.5 3.5 1.5 25 0 3 3 0];
+%     obs3 = [8 5.5 3.5 1.5 18 0.1 2 1 -10*pi/180];
+    obs1 = [13 10 3.5 1.5 15 0.2 5 1 -90*pi/180];
+    obs2 = [15 10 2.5 1 20 0 3 3 0];
+    obs = obs2;
     boundingBoxArr = [obs(:,1)-obs(:,3)/2 obs(:,2)-obs(:,4)/2 obs(:,3) obs(:,4);ego(:,1)-ego(:,3)/2 ego(:,2)-ego(:,4)/2 ego(:,3) ego(:,4)];
     % fun = @(x)fun_carrisk(ego,obs);
     max_E = 0.0;
@@ -41,15 +44,17 @@ for i=25:25
         legend_id(i1,:) = ['car',num2str(id)];
         re_loca = [ego(1)-o(1) ego(2)-o(2)];
         v_re = o(5)-ego(5);
+        r = o(9); % 没有数据
         yaw_re = o(9)-ego(8); % 没有数据
-        r = o(9);
-        
+        v_dir = 0;
+        if ((ego(8) >= 0 && obs(9) < 0) || (ego(8)<0  && obs(9)>0))
+            v_dir = 1;
+        end
         yaw_sign = 1;
         if (yaw_re < 0)
             yaw_sign = 0;
         end
-        
-        yaw_vec = [cos(yaw_re*pi/180) sin(yaw_re*pi/180)];
+        yaw_vec = [cos(yaw_re) sin(yaw_re)];
         
         obs_a = o(6);
         a_r = normrnd(obs_a, 0.15, [10,1]);
@@ -71,20 +76,18 @@ for i=25:25
         if o_lane == ego_lane
             sign = 1; % follow
             v_r = v_re*simi_sign;
-            v_sign = 1;
-            if (cos(yaw_re) < 0)
-                v_sign = 0;
-            end
-            if sign == 0 || v_r < 0 || v_sign
+            if (simi >= 0 && v_dir)
+                k_d = 1 + log(1+v_r);
+            elseif sign == 0 || v_r < 0
                 ratio = abs(v_re)/ego_v;
                 k_d = (1+exp(-ratio))*(o(4)/o(3));
             else
                 k_d = 1 + log(1+v_r);
             end
         else
-            d_sign = 0;
+            d_sign = 1;
             if re_loca(1) < 0
-                d_sign = 1;
+                d_sign = 0;
             end
             sign = ~xor(d_sign, yaw_sign);
             if sign == 0
@@ -106,7 +109,7 @@ for i=25:25
         
         val = 0.0;
         
-        kl_1 = o(3)*k_d;
+        kl_1 = o(3)*real(k_d);
         kl_2 = o(4);
         for i3 = 1 : length(row)
             for j = 1 : length(col)
@@ -119,10 +122,7 @@ for i=25:25
                     if k_first > delta_v(k)
                         k_first = exp(k_first);
                     end
-                    l1 = i3-o(2); %y
-                    l2 = j-o(1); %x
-                    val = (val + exp(-0.13*a_r(k)*simi*(l2/sqrt(l1^2+l2^2)))/(k_first))/a_n;
-                    %val = (val + exp(a_r(k)*simi*(l2/sqrt(l1^2+l2^2)))/k_first)/a_n;
+                    val = (val + exp(a_r(k)*simi)/(k_first+0.1))/a_n;
                 end
                 tmp(i3,j) = tmp(i3,j)+real(val);
                 if tmp(i3,j) > max_E
@@ -142,38 +142,38 @@ for i=25:25
         map_cdf = tmp_cdf;
         max_E = 0.0;
         
-        %CCDF
-        rl = min(floor(ego(1)-ego(3)), floor(o(1)-o(3)-max_de-3));
-        rr = max(ceil(ego(1)+ego(3)), ceil(o(1)+o(3)+max_de+3));
-        cu = min(floor(ego(2)-ego(4)), floor(o(2)-o(4)-max_de-3));
-        cl = max(ceil(ego(2)+ego(4)), ceil(o(2)+o(4)+max_de+3));
-        rl = max(1,rl);
-        rr = min(25,rr);
-        cl = min(15,cl);
-        cu = max(1,cu);
-        map_cdf = map_cdf([cu:cl],[rl:rr]);
-        map1 = map_cdf';
-        map1 = map1(1:end);
-        [f,xx] = ecdf(map1);
-        % ecdf(map1)
-        % cdfplot(map1);
-        f = 1-f;
-        p = plot(xx,f,'LineWidth',2);
-        hold on
+%         %CCDF
+%         rl = min(floor(ego(1)-ego(3)), floor(o(1)-o(3)-max_de-3));
+%         rr = max(ceil(ego(1)+ego(3)), ceil(o(1)+o(3)+max_de+3));
+%         cu = min(floor(ego(2)-ego(4)), floor(o(2)-o(4)-max_de-3));
+%         cl = max(ceil(ego(2)+ego(4)), ceil(o(2)+o(4)+max_de+3));
+%         rl = max(1,rl);
+%         rr = min(25,rr);
+%         cl = min(15,cl);
+%         cu = max(1,cu);
+%         map_cdf = map_cdf([cu:cl],[rl:rr]);
+%         map1 = map_cdf';
+%         map1 = map1(1:end);
+%         [f,xx] = ecdf(map1);
+%         % ecdf(map1)
+%         % cdfplot(map1);
+%         f = 1-f;
+%         p = plot(xx,f,'LineWidth',2);
+%         hold on
     end
-    ylabel('CCDF','FontSize',10,'FontName','Arial','FontWeight','bold');
-    xlabel({'a'},'FontSize',10,'FontName','Arial','FontWeight','bold');
-    char(legend_id);
-    legend(char(legend_id));
-    set(gca,'FontSize',16)
-    g = get(p,'Parent');%对应p1所在的坐标轴
-    set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
+%     ylabel('CCDF','FontSize',10,'FontName','Arial','FontWeight','bold');
+%     xlabel({'a'},'FontSize',10,'FontName','Arial','FontWeight','bold');
+%     char(legend_id);
+%     legend(char(legend_id));
+%     set(gca,'FontSize',16)
+%     g = get(p,'Parent');%对应p1所在的坐标轴
+%     set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
  
 %     figure(2)
 %     set(gca,'Ydir','reverse')
 %     line(xLimit,[-5 -5],'Color','blue','LineStyle','--')
 %     line(xLimit,[20 20],'Color','blue','LineStyle','--')
-    %boundingBoxArr1 = [ego(1)-ego(3)/2-xLimit(1) ego(2)-ego(4)/2 ego(3) ego(4)];
+%     %boundingBoxArr1 = [ego(1)-ego(3)/2-xLimit(1) ego(2)-ego(4)/2 ego(3) ego(4)];
 %    
 %     %subplot(1,2,1)
 %     %rectangle('Position', boundingBoxArr1(1,:), 'FaceColor', [1 1 0])
@@ -194,38 +194,40 @@ for i=25:25
 %     %grid on
 %     hold on
     
-%     for j=1:length(boundingBoxArr(:,1))
-%         hold on
-%         if(j == length(boundingBoxArr(:,1)))
-%             rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 0 0])
-%         else
-%             rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 1 0])
-%         end
-%     end
-%     
+    
     figure(1)
-    set(gcf,'unit','centimeters','position',[10 5 17 10]); % 10cm*17.4cm
+    %set(gcf,'unit','centimeters','position',[10 5 22 12]); % 10cm*17.4cm
     set(gcf,'ToolBar','none','ReSize','off');   % 移除工具栏
     set(gcf,'color','w'); % 背景设为白色
 
     %subplot(2,2,1) 
 
+    for j=1:length(boundingBoxArr(:,1))
+         hold on
+         if(j == length(boundingBoxArr(:,1)))
+             rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 0 0])
+         else
+             rectangle('Position', boundingBoxArr(j,:), 'FaceColor', [1 1 0])
+         end
+    end
+
+
     [c,p1] = contour(map, 'LineWidth', 1.5);
     %set(gca,'Position',[0.08 0.25 0.42 0.55]);%第(1)个图的位置
     g = get(p1,'Parent');%对应p1所在的坐标轴
     set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
-    ylabel('Risk distribution','FontSize',10,'FontName','Arial','FontWeight','bold');
-    xlabel({'Lane width'},'FontSize',10,'FontName','Arial','FontWeight','bold');
+    ylabel('Lane width [m]','FontSize',10,'FontName','Arial','FontWeight','bold');
+    xlabel({'Lane width [m]','(a)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
     colorbar; colormap(jet);
-% 
-%     subplot(2,2,2) 
-%     p2 = mesh(map);
-%     set(gca,'Position',[0.56 0.25 0.42 0.55]);%第(2)个图的位置
-%     g = get(p2,'Parent');%对应p1所在的坐标轴
-%     set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
-%     %set(g,'ZTick',[]);
-%     %zlabel('Risk strength','FontSize',10,'FontName','Arial','FontWeight','bold');
-%     xlabel({'Lane width','(b)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
-%     colorbar; colormap(jet);
+
+    %subplot(2,2,2) 
+    %p2 = mesh(map, 'LineWidth', 1.5);
+    %set(gca,'Position',[0.56 0.25 0.42 0.55]);%第(2)个图的位置
+    %g = get(p2,'Parent');%对应p1所在的坐标轴
+    %set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
+    %set(g,'ZTick',[]);
+    %zlabel('Risk strength','FontSize',10,'FontName','Arial','FontWeight','bold');
+    %xlabel({'Lane width','(b)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
+    %colorbar; colormap(jet);
 
 end

@@ -39,39 +39,39 @@ set(gcf,'color','w'); % 背景设为白色
  
 subplot(2,2,1) 
  
-p1 = plot(W,Eb_2,'b-','LineWidth',1.5);
+p1 = plot(W,E_2,'b-','LineWidth',1.5);
 hold on
 set(gca,'Position',[0.08 0.6 0.30 0.3]);%第(1)个图的位置
 g = get(p1,'Parent');%对应p1所在的坐标轴
 set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
+legend([p1],'\fontname{Arial}E_{l}','Orientation','horizontal');
 ylabel('Risk strength','FontSize',10,'FontName','Arial','FontWeight','bold');
-xlabel({'Lane width','(a)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
+xlabel({'Road width','(a)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
  
 subplot(2,2,2) 
-p2 = mesh(ww,xx,Eb);
+p2 = mesh(ww,xx,E);
 set(gca,'Position',[0.56 0.55 0.40 0.43]);%第(2)个图的位置
 g = get(p2,'Parent');%对应p1所在的坐标轴
 set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
 %set(g,'ZTick',[]);
 %ylabel('Error [m]','FontSize',10,'FontName','Arial','FontWeight','bold');
-xlabel({'Lane width','(b)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
+xlabel({'Road width','(b)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
  
 subplot(2,2,3) 
-p3 = mesh(ww, xx, Eb_both);
+p3 = mesh(ww, xx, Et);
 hold on
 set(gca,'Position',[0.32 0.1 0.48 0.43]);%第(3)个图的位置
 g = get(p3,'Parent');%对应p1所在的坐标轴
 set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
 zlabel('Risk strength','FontSize',10,'FontName','Arial','FontWeight','bold');
-xlabel({'Lane width','(c)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
+xlabel({'Road width','(c)'},'FontSize',10,'FontName','Arial','FontWeight','bold');
 %h3 = legend('\fontname{Arial}E_{total}');
 %set(h3,'Linewidth',1.5,'FontSize',10,'FontWeight','bold');
 %set(h3,'position',[0.1,0.1,0.1,0.1]);%legend位置
  
-h1=legend([p1],'\fontname{Arial}E_b','Orientation','horizontal');
-set(h1,'Linewidth',1.5,'FontSize',10,'FontWeight','bold');
-set(h1,'position',[0.25,0.9,0.2,0.1]);%legend位置
-set(h1,'Box','off');
+% set(h1,'Linewidth',1.5,'FontSize',10,'FontWeight','bold');
+% set(h1,'position',[0.25,0.9,0.2,0.1]);%legend位置
+% set(h1,'Box','off');
 
 %exportgraphics(gcf,'peaks.png','Resolution',300);%输出分辨率为300的PNG图片
 %exportgraphics(gcf,'peaks.pdf','ContentType','vector');%输出矢量pdf图片

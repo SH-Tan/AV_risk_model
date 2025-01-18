@@ -1,21 +1,21 @@
 clear all
 clc
 
-% load('./data/car1259.mat')
-% load('./data/car1248.mat')
-% trajectories = cat(1, car1259, car1248);
+ load('./data/car1259.mat')
+ load('./data/car1248.mat')
+ trajectories = cat(1, car1259, car1248);
 
-load('change.mat')
-trajectories = data;
+%load('change.mat')
+%trajectories = data;
 
 % Section limits can be adjusted, here it is 200-800 feets (600 feets long)
-sectionLimits = [120 145];
+%sectionLimits = [120 145];
 %sectionLimits = [150 270];
-%sectionLimits = [210 240];
+sectionLimits = [215 240];
 
 % Limits of x-y axis
 xLimit = [sectionLimits(1) sectionLimits(2)];
-yLimit = [5 20];
+yLimit = [0 10];
 
 col = xLimit(1):1:xLimit(2);
 row = yLimit(1):1:yLimit(2);
@@ -28,10 +28,9 @@ ccdf_x = [];
 
 % xlabel('x');
 % ylabel('CCDF');
-figure(1)
 legend_id = [];
-for i=7:7
-    legend_id(i,:) = num2str(i);
+for i=23:23
+    legend_id(i-2,:) = num2str(i);
     frameData = trajectories(trajectories(:,2)==Frames(i) & ...
         trajectories(:,6)>=sectionLimits(1) & ...
         trajectories(:,6)<=sectionLimits(2),:);
@@ -50,12 +49,12 @@ for i=7:7
     % Construct vehicle bounding boxes
     boundingBoxArr = [longitudePos-len lateralPos-width/2 len width];
     
-%     ego_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1259,:);
-%     obs_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1248,:);
+     ego_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1259,:);
+     obs_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1248,:);
 %     obs_data = frameData(frameData(:,1) == 2476,:);
-% 
-    ego_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1274,:);
-    obs_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1267,:);
+
+    %ego_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1274,:);
+    %obs_data = trajectories(trajectories(:,2)==Frames(i) & trajectories(:,1) == 1267,:);
 
     % y x l w v a lane_id
     ego = [ego_data(:,6)-ego_data(:,9)/2 ego_data(:,5) ego_data(:,9) ego_data(:,10) ego_data(:,12) ego_data(:,13) ego_data(:,14) ego_data(:,19)];
@@ -182,7 +181,7 @@ for i=7:7
         % update map
         for i4 = 1 : length(row)
             for j = 1 : length(col)+xLimit(1)
-                if abs(max_E - max_E_2) > 3
+                if abs(max_E - max_E_2) > 0.45
                     if tmp(i4,j) == max_E
                         tmp_cdf(i4,j) = (tmp(i4,j)/max_E);
                         tmp(i4,j) = 255*(tmp(i4,j)/max_E);
@@ -203,54 +202,60 @@ for i=7:7
         max_E_2 = 0.0;
         
         %CCDF
-        %CCDF
-%         rl = min(floor(ego(1)-ego(3)), floor(o(1)-o(3)-10));
-%         rr = max(ceil(ego(1)+ego(3)), ceil(o(1)+o(3)+10));
-%         cu = min(floor(ego(2)-ego(4)), floor(o(2)-o(4)-10));
-%         cl = max(ceil(ego(2)+ego(4)), ceil(o(2)+o(4)+10));
-%         rl = max(xLimit(1),rl);
-%         rr = min(xLimit(2),rr);
-%         cl = min(yLimit(2),cl);
-%         cu = max(1,cu);
-%         t_cdf = map_cdf([cu:cl],[rl:rr]);
-%         %t_cdf = map_cdf;
-%         map1 = t_cdf';
-%         map1 = map1(1:end);
-%         [f,xx] = ecdf(map1);
-%         % ecdf(map1)
-%         % cdfplot(map1);
-%         f = 1-f;
-%         plot(xx,f, 'LineWidth', 1)
-%         hold on
+        rl = min(floor(ego(1)-ego(3)), floor(o(1)-o(3)-10));
+        rr = max(ceil(ego(1)+ego(3)), ceil(o(1)+o(3)+10));
+        cu = min(floor(ego(2)-ego(4)), floor(o(2)-o(4)-10));
+        cl = max(ceil(ego(2)+ego(4)), ceil(o(2)+o(4)+10));
+        rl = max(xLimit(1),rl);
+        rr = min(xLimit(2),rr);
+        cl = min(yLimit(2),cl);
+        cu = max(1,cu);
+        t_cdf = map_cdf([cu:cl],[rl:rr]);
+        %t_cdf = map_cdf;
+        map1 = t_cdf';
+        map1 = map1(1:end);
+        %[f,xx] = ecdf(map1);
+        %ecdf(map1)
+        %cdfplot(map1);
+        %f = 1-f;
+       % p = plot(xx,f, 'LineWidth', 1.5);
+        %g = get(p,'Parent');%对应p1所在的坐标轴
+        %set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
+        %hold on
     end
+%     xlabel('a');
+%     ylabel('CCDF');
+%     char(legend_id)
+%     lgd = legend(char(legend_id));
+%     set(lgd,'FontSize',12);
     
     t = strcat('Frames', num2str(i));
+%     
+     %f = figure('name',t, 'color', 'w');
     
-    f = figure('name',t, 'color', 'w');
-    
-    %figure(5)
-    
-%     line(xLimit,[-5 -5],'Color','blue','LineStyle','--')
-%     line(xLimit,[20 20],'Color','blue','LineStyle','--')
-    %boundingBoxArr1 = [ego(1)-ego(3)/2-xLimit(1) ego(2)-ego(4)/2 ego(3) ego(4)];
-    %rectangle('Position', boundingBoxArr1(1,:), 'FaceColor', [1 1 0])
-    %hold on
-    % image(map(:,[xLimit(1):xLimit(2)]))
-    [c,p11] = contour(col, row, map(:,[xLimit(1):xLimit(2)]));
-    g = get(p11,'Parent');%对应p1所在的坐标轴
-    set(g,'Linewidth',1.5,'FontSize',10,'FontName','Arial','FontWeight','bold');
-    ylabel('width [m]','FontSize',10,'FontName','Arial','FontWeight','bold');
-    xlabel('length [m]','FontSize',10,'FontName','Arial','FontWeight','bold');
-    title(t)
-    % contour(row1,col1, map_cdf)
-    % pcolor(col,row,map);
-    % surf(x,y,z); view(0,90); %等效的写法
-    % shading interp; 
-    colorbar; colormap(jet);
-    % xlabel('X');ylabel('Y');
-    % set(gca,'FontSize',16)
-    set(gca,'Ydir','reverse')
-    grid on
+     figure(5)
+%     
+% %     line(xLimit,[-5 -5],'Color','blue','LineStyle','--')
+% %     line(xLimit,[20 20],'Color','blue','LineStyle','--')
+%     %boundingBoxArr1 = [ego(1)-ego(3)/2-xLimit(1) ego(2)-ego(4)/2 ego(3) ego(4)];
+%     %rectangle('Position', boundingBoxArr1(1,:), 'FaceColor', [1 1 0])
+%     %hold on
+%     % image(map(:,[xLimit(1):xLimit(2)]))
+     [c,p11] = contour(col, row, map(:,[xLimit(1):xLimit(2)]), 'LineWidth', 1.5);
+     g = get(p11,'Parent');%对应p1所在的坐标轴
+     set(g,'Linewidth',1.5,'FontSize',12,'FontName','Arial','FontWeight','bold');
+     ylabel('Width [m]','FontSize',12,'FontName','Arial','FontWeight','bold');
+     xlabel('Length [m]','FontSize',12,'FontName','Arial','FontWeight','bold');
+     title(t, 'FontSize',10,'FontName','Arial','FontWeight','bold')
+%     % contour(row1,col1, map_cdf)
+%     % pcolor(col,row,map);
+%     % surf(x,y,z); view(0,90); %等效的写法
+%     % shading interp; 
+     colorbar; colormap(jet);
+%     % xlabel('X');ylabel('Y');
+%     % set(gca,'FontSize',16)
+     set(gca,'Ydir','reverse')
+     grid on
 %     n = strcat(t,'.jpg');
     %saveas(f, strcat('./res/my/',n));
     
@@ -274,7 +279,8 @@ for i=7:7
     %clf('reset')
 end
 
-% xlabel('x');
-% ylabel('CCDF');
-% char(legend_id);
-% legend(char(legend_id));
+%xlabel('a');
+%ylabel('CCDF');
+%char(legend_id);
+%lgd = legend(char(legend_id));
+%set(lgd,'FontSize',12);
